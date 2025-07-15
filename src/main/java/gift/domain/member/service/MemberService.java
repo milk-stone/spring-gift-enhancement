@@ -40,10 +40,7 @@ public class MemberService {
         Member targetMember = memberRepository.findById(id).orElseThrow(
                 () -> new MemberNotFoundException("MemberService : updateMemberInfo() failed - member not found"));
         targetMember.update(req.email(), req.password(), req.name());
-        int affectedRows = memberRepository.update(targetMember);
-        if (affectedRows == 0) {
-            throw new RuntimeException("MemberService : updateMemberInfo() failed - 500 Internal Server Error");
-        }
+        memberRepository.save(targetMember);
     }
 
     @Transactional
@@ -53,17 +50,14 @@ public class MemberService {
         }
         Member targetMember = memberRepository.findById(id).orElseThrow(
                 () -> new MemberNotFoundException("MemberService : updateMemberInfo() failed - member not found"));
-        memberRepository.delete(targetMember.getId());
+        memberRepository.delete(targetMember);
     }
 
     public List<MemberInfoResponse> getMembers(Member member) {
         if (!member.getRole().equalsIgnoreCase(RoleType.ADMIN.toString())) {
             throw new NotAdminException("MemberService : getMembers() failed - member is not admin");
         }
-        List<Member> members = memberRepository.getAll();
-        if (members == null) {
-            throw new RuntimeException("ProductService : getAllProducts() failed - 500 Internal Server Error");
-        }
+        List<Member> members = memberRepository.findAll();
         if (members.isEmpty()) {
             return null;
         }

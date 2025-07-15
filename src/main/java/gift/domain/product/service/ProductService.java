@@ -21,15 +21,11 @@ public class ProductService {
     @Transactional
     public ProductResponse addProduct(ProductRequest req) {
         Product product = new Product(req.name(), req.price(), req.imageUrl());
-        Optional<Product> optionalProduct = productRepository.save(product);
-        if (optionalProduct.isPresent()) {
-            return ProductResponse.from(optionalProduct.get());
-        }
-        throw new RuntimeException("ProductService : addProduct() failed - 500 Internal Server Error");
+        return ProductResponse.from(productRepository.save(product));
     }
 
     public ProductResponse getProduct(Long id) {
-        Optional<Product> optionalProduct = productRepository.get(id);
+        Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isEmpty()) {
             throw new RuntimeException("ProductService : getProduct() failed - 404 Not Found Error");
         }
@@ -39,37 +35,26 @@ public class ProductService {
 
     @Transactional
     public void updateProduct(Long id, ProductUpdateRequest req) {
-        // 1. 조회
-        Optional<Product> optionalProduct = productRepository.get(id);
+        Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isEmpty()) {
             throw new RuntimeException("ProductService : updateProduct() failed - 404 Not Found Error");
         }
         Product product = optionalProduct.get();
-
-        // 2. 수정
         product.update(req.name(), req.price(), req.imageUrl());
-
-        // 3. DB 업데이트
-        int affectedRows = productRepository.update(product);
-        if (affectedRows == 0) {
-            throw new RuntimeException("ProductService : updateProduct() failed - 500 Internal Server Error");
-        }
+        productRepository.save(product);
     }
 
     @Transactional
     public void deleteProduct(Long id) {
-        Optional<Product> optionalProduct = productRepository.get(id);
+        Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isEmpty()) {
             throw new RuntimeException("ProductService : deleteProduct() failed - 404 Not Found Error");
         }
-        productRepository.delete(id);
+        productRepository.delete(optionalProduct.get());
     }
 
     public List<ProductResponse> getAllProducts() {
-        List<Product> products = productRepository.getAll();
-        if (products == null) {
-            throw new RuntimeException("ProductService : getAllProducts() failed - 500 Internal Server Error");
-        }
+        List<Product> products = productRepository.findAll();
         if (products.isEmpty()) {
             return null;
         }
