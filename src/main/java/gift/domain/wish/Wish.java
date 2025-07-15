@@ -36,12 +36,12 @@ public class Wish {
         return id;
     }
 
-    public Long getMemberId() {
-        return member.getId();
+    public Long getMember() {
+        return member;
     }
 
-    public Long getProductId() {
-        return product.getId();
+    public Long getProduct() {
+        return product;
     }
 
     public int getQuantity() {
