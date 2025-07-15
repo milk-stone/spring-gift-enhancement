@@ -36,11 +36,11 @@ public class Wish {
         return id;
     }
 
-    public Long getMember() {
+    public Member getMember() {
         return member;
     }
 
-    public Long getProduct() {
+    public Product getProduct() {
         return product;
     }
 
