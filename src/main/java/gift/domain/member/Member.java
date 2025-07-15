@@ -8,7 +8,8 @@ import java.util.List;
 
 @Entity
 public class Member {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
     private String email;
@@ -19,36 +20,45 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private final List<Wish> wishList = new ArrayList<>();
 
-    protected Member(){}
+    protected Member() {
+    }
 
-    public Member(String email, String password, String name){
+    public Member(String email, String password, String name) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.role = RoleType.USER;
     }
 
-    public Long getId(){
+    public Long getId() {
         return id;
     }
-    public String getEmail(){
+
+    public String getEmail() {
         return email;
     }
-    public String getPassword(){
+
+    public String getPassword() {
         return password;
     }
-    public String getName(){
+
+    public String getName() {
         return name;
     }
-    public String getRole(){
+
+    public String getRole() {
         return role.toString();
     }
 
-    public boolean verifyPassword(String password){
+    public List<Wish> getWishList() {
+        return wishList;
+    }
+
+    public boolean verifyPassword(String password) {
         return this.password.equals(password);
     }
 
-    public void update(String email, String password, String name){
+    public void update(String email, String password, String name) {
         this.email = email;
         this.password = password;
         this.name = name;
