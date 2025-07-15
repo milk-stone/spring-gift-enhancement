@@ -49,7 +49,7 @@ public class MemberService {
             throw new NotAdminException("MemberService : deleteMemberInfo() failed - member is not admin");
         }
         Member targetMember = memberRepository.findById(id).orElseThrow(
-                () -> new MemberNotFoundException("MemberService : updateMemberInfo() failed - member not found"));
+                () -> new MemberNotFoundException("MemberService : deleteMemberInfo() failed - member not found"));
         memberRepository.delete(targetMember);
     }
 

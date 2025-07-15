@@ -29,7 +29,7 @@ public class WishService {
     }
 
     public void createWish(WishRequest wishRequest, Member member) {
-        Product product = productRepository.findById(wishRequest.productId()).orElseThrow(() -> new ProductNotFoundException("WishService : createWish() failed - 404 Not Found"));
+        Product product = productRepository.findById(wishRequest.productId()).orElseThrow(() -> new ProductNotFoundException("WishService : createWish() failed - id가 " + wishRequest.productId() + "인 Product 객체가 존재하지 않습니다."));
         Wish wish = new Wish(member, product, wishRequest.quantity());
         wishRepository.save(wish);
         member.getWishList().add(wish);
@@ -37,7 +37,7 @@ public class WishService {
     }
 
     public void updateWish(Long id, WishUpdateRequest req, Member member) {
-        Wish wish = wishRepository.findById(id).orElseThrow(() -> new WishNotFoundException(id + "가 존재하지 않습니다."));
+        Wish wish = wishRepository.findById(id).orElseThrow(() -> new WishNotFoundException("WishService : updateWish() failed - id가 " + id + "인 Wish 객체가 존재하지 않습니다."));
         if (!wish.getMember().equals(member)) {
             throw new BadRequestException("WishService : updateWish() failed - Wrong member");
         }
@@ -46,9 +46,9 @@ public class WishService {
     }
 
     public void deleteWish(Long id, Member member) {
-        Wish wish = wishRepository.findById(id).orElseThrow(() -> new WishNotFoundException(id + "가 존재하지 않습니다."));
+        Wish wish = wishRepository.findById(id).orElseThrow(() -> new WishNotFoundException("WishService : deleteWish() failed - id가 " + id + "인 Wish 객체가 존재하지 않습니다."));
         if (!wish.getMember().equals(member)) {
-            throw new BadRequestException("WishService : updateWish() failed - Wrong member");
+            throw new BadRequestException("WishService : deleteWish() failed - Wrong member");
         }
         wishRepository.delete(wish);
     }
