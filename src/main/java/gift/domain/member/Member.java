@@ -1,11 +1,23 @@
 package gift.domain.member;
 
+import gift.domain.wish.Wish;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
 public class Member {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long id;
     private String email;
     private String password;
     private String name;
     private RoleType role;
+
+    @OneToMany(mappedBy = "member")
+    private final List<Wish> wishList = new ArrayList<>();
 
     protected Member(){}
 

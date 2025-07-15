@@ -1,12 +1,23 @@
 package gift.domain.product;
 
+import gift.domain.wish.Wish;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
+@Entity
 public class Product {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_id")
     private Long id;
     private String name;
     private Long price;
     private String imageUrl;
+
+    @OneToMany(mappedBy = "product")
+    private final List<Wish> wishList = new ArrayList<>();
 
     private static final int MAX_NAME_LENGTH = 15;
     private static final Pattern ALLOWED_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9가-힣\\s\\(\\)\\[\\]\\+\\-\\&\\/_]*$");

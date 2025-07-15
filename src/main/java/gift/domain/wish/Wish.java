@@ -1,25 +1,34 @@
 package gift.domain.wish;
 
-public class Wish {
+import gift.domain.member.Member;
+import gift.domain.product.Product;
+import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+public class Wish {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "wish_id")
     private Long id;
-    private Long memberId;
-    private Long productId;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
     private int quantity;
 
     protected Wish() {
     }
 
-    public Wish(Long memberId, Long productId, int quantity) {
-        this.memberId = memberId;
-        this.productId = productId;
-        this.quantity = quantity;
-    }
-
-    public Wish(Long id, Long memberId, Long productId, int quantity) {
-        this.id = id;
-        this.memberId = memberId;
-        this.productId = productId;
+    public Wish(Member member, Product product, int quantity) {
+        this.member = member;
+        this.product = product;
         this.quantity = quantity;
     }
 
@@ -28,11 +37,11 @@ public class Wish {
     }
 
     public Long getMemberId() {
-        return memberId;
+        return member.getId();
     }
 
     public Long getProductId() {
-        return productId;
+        return product.getId();
     }
 
     public int getQuantity() {
