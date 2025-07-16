@@ -9,6 +9,5 @@ import java.util.List;
 
 @Repository
 public interface WishRepository extends JpaRepository<Wish, Long> {
-    @Query(value = "SELECT * FROM wish WHERE member_id = :memberId", nativeQuery = true)
-    List<Wish> findAllByMember(Long memberId);
+    List<Wish> findAllByMemberId(Long memberId);
 }

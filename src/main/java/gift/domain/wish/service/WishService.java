@@ -54,7 +54,7 @@ public class WishService {
     }
 
     public List<WishResponse> getWishes(Member member) {
-        return wishRepository.findAllByMember(member.getId()).stream()
+        return wishRepository.findAllByMemberId(member.getId()).stream()
                 .map(WishResponse::from)
                 .toList();
     }
