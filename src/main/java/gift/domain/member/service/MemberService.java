@@ -28,7 +28,7 @@ public class MemberService {
             throw new NotAdminException("MemberService : getMemberInfo() failed - member is not admin");
         }
         Member targetMember = memberRepository.findById(id).orElseThrow(
-                () -> new MemberNotFoundException("MemberService : getMemberInfo() failed - member not found"));
+                () -> new MemberNotFoundException("MemberService : getMemberInfo() failed", id));
         return MemberInfoResponse.from(targetMember);
     }
 
@@ -38,7 +38,7 @@ public class MemberService {
             throw new NotAdminException("MemberService : updateMemberInfo() failed - member is not admin");
         }
         Member targetMember = memberRepository.findById(id).orElseThrow(
-                () -> new MemberNotFoundException("MemberService : updateMemberInfo() failed - member not found"));
+                () -> new MemberNotFoundException("MemberService : updateMemberInfo() failed", id));
         targetMember.update(req.email(), req.password(), req.name());
         memberRepository.save(targetMember);
     }
@@ -49,7 +49,7 @@ public class MemberService {
             throw new NotAdminException("MemberService : deleteMemberInfo() failed - member is not admin");
         }
         Member targetMember = memberRepository.findById(id).orElseThrow(
-                () -> new MemberNotFoundException("MemberService : deleteMemberInfo() failed - member not found"));
+                () -> new MemberNotFoundException("MemberService : deleteMemberInfo() failed", id));
         memberRepository.delete(targetMember);
     }
 
