@@ -44,7 +44,7 @@ public class WishService {
         if (!wish.getMember().equals(member)) {
             throw new BadRequestException("WishService : updateWish() failed - Wrong member");
         }
-        wish.update(req.quantity());
+        wish.updateQuantity(req.quantity());
         wishRepository.save(wish);
     }
 

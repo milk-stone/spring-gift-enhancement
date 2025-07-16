@@ -2,6 +2,7 @@ package gift.domain.wish;
 
 import gift.domain.member.Member;
 import gift.domain.product.Product;
+import gift.global.exception.BadRequestException;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -9,7 +10,8 @@ import java.util.List;
 
 @Entity
 public class Wish {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "wish_id")
     private Long id;
 
@@ -48,7 +50,14 @@ public class Wish {
         return quantity;
     }
 
-    public void update(int quantity){
+    public void updateQuantity(int quantity) {
+        validateQuantity(quantity);
         this.quantity = quantity;
+    }
+
+    public void validateQuantity(int quantity) {
+        if (quantity <= 0) {
+            throw new BadRequestException("Quantity must be a positive number");
+        }
     }
 }
