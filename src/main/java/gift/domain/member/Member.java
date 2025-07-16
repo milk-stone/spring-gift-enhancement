@@ -63,4 +63,9 @@ public class Member {
         this.password = password;
         this.name = name;
     }
+
+    public boolean hasProductInWishList(Long productId) {
+        return this.wishList.stream()
+                .anyMatch(wish -> wish.getProduct().getId().equals(productId));
+    }
 }

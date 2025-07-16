@@ -29,6 +29,9 @@ public class WishService {
     }
 
     public void createWish(WishRequest wishRequest, Member member) {
+        if (member.hasProductInWishList(wishRequest.productId())) {
+            throw new IllegalArgumentException("이미 위시리스트에 추가된 상품입니다.");
+        }
         Product product = productRepository.findById(wishRequest.productId()).orElseThrow(() -> new ProductNotFoundException("WishService : createWish() failed", wishRequest.productId()));
         Wish wish = new Wish(member, product, wishRequest.quantity());
         wishRepository.save(wish);
