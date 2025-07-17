@@ -2,7 +2,7 @@ package gift.domain.wish.controller;
 
 import gift.domain.annotation.LoginMember;
 import gift.domain.member.Member;
-import gift.domain.wish.dto.WishListResponse;
+import gift.domain.wish.dto.WishListPageResponse;
 import gift.domain.wish.dto.WishRequest;
 import gift.domain.wish.dto.WishResponse;
 import gift.domain.wish.dto.WishUpdateRequest;
@@ -52,10 +52,10 @@ public class WishController {
     }
 
     @GetMapping
-    public ResponseEntity<WishListResponse> getWishes(
+    public ResponseEntity<WishListPageResponse> getWishes(
             @LoginMember Member member,
             @PageableDefault(size = 10, sort = "id") Pageable pageable
     ) {
-        return new ResponseEntity<>(new WishListResponse(wishService.getWishes(member, pageable)), HttpStatus.OK);
+        return new ResponseEntity<>(new WishListPageResponse(wishService.getWishes(member, pageable)), HttpStatus.OK);
     }
 }

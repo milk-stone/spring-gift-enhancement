@@ -1,6 +1,6 @@
 package gift.domain.product.controller;
 
-import gift.domain.product.dto.ProductListResponse;
+import gift.domain.product.dto.ProductPageResponse;
 import gift.domain.product.dto.ProductRequest;
 import gift.domain.product.dto.ProductResponse;
 import gift.domain.product.dto.ProductUpdateRequest;
@@ -45,9 +45,9 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<ProductListResponse> productList(
+    public ResponseEntity<ProductPageResponse> productList(
             @PageableDefault(size = 10, sort = "id") Pageable pageable) {
-        return new ResponseEntity<>(new ProductListResponse(productService.getAllProducts(pageable)), HttpStatus.OK);
+        return new ResponseEntity<>(new ProductPageResponse(productService.getAllProducts(pageable)), HttpStatus.OK);
     }
 
 }
