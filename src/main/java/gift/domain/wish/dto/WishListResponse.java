@@ -1,6 +1,6 @@
 package gift.domain.wish.dto;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
-public record WishListResponse(List<WishResponse> wishResponses) {
+public record WishListResponse(Page<WishResponse> wishResponses) {
 }
