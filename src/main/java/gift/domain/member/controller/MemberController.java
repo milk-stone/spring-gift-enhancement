@@ -7,6 +7,7 @@ import gift.domain.member.dto.MemberInfoResponse;
 import gift.domain.member.dto.MemberInfoUpdateRequest;
 import gift.domain.member.service.MemberService;
 import gift.global.exception.TokenExpiredException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +48,7 @@ public class MemberController {
     }
 
     @GetMapping
-    public ResponseEntity<MemberInfoListResponse> getMemberInfos(@LoginMember Member member) {
-        return new ResponseEntity<>(new MemberInfoListResponse(memberService.getMembers(member)), HttpStatus.OK);
+    public ResponseEntity<MemberInfoListResponse> getMemberInfos(@LoginMember Member member, Pageable pageable) {
+        return new ResponseEntity<>(new MemberInfoListResponse(memberService.getMembers(member, pageable)), HttpStatus.OK);
     }
 }
