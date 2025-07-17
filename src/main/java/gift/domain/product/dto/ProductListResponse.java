@@ -1,6 +1,6 @@
 package gift.domain.product.dto;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
-public record ProductListResponse(List<ProductResponse> productResponseList) {
+public record ProductListResponse(Page<ProductResponse> productResponseList) {
 }

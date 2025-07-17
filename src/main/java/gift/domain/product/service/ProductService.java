@@ -6,6 +6,8 @@ import gift.domain.product.dto.ProductResponse;
 import gift.domain.product.dto.ProductUpdateRequest;
 import gift.domain.product.repository.ProductRepository;
 import gift.global.exception.ProductNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,14 +46,8 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    public List<ProductResponse> getAllProducts() {
-        List<Product> products = productRepository.findAll();
-        if (products.isEmpty()) {
-            return null;
-        }
-        return products
-                .stream()
-                .map(ProductResponse::from)
-                .toList();
+    public Page<ProductResponse> getAllProducts(Pageable pageable) {
+        Page<Product> products = productRepository.findAll(pageable);
+        return products.map(ProductResponse::from);
     }
 }
