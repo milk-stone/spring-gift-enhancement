@@ -1,25 +1,36 @@
 package gift.domain.wish;
 
-public class Wish {
+import gift.domain.member.Member;
+import gift.domain.product.Product;
+import gift.global.exception.BadRequestException;
+import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+public class Wish {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "wish_id")
     private Long id;
-    private Long memberId;
-    private Long productId;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
     private int quantity;
 
     protected Wish() {
     }
 
-    public Wish(Long memberId, Long productId, int quantity) {
-        this.memberId = memberId;
-        this.productId = productId;
-        this.quantity = quantity;
-    }
-
-    public Wish(Long id, Long memberId, Long productId, int quantity) {
-        this.id = id;
-        this.memberId = memberId;
-        this.productId = productId;
+    public Wish(Member member, Product product, int quantity) {
+        this.member = member;
+        this.product = product;
         this.quantity = quantity;
     }
 
@@ -27,19 +38,26 @@ public class Wish {
         return id;
     }
 
-    public Long getMemberId() {
-        return memberId;
+    public Member getMember() {
+        return member;
     }
 
-    public Long getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
     public int getQuantity() {
         return quantity;
     }
 
-    public void update(int quantity){
+    public void updateQuantity(int quantity) {
+        validateQuantity(quantity);
         this.quantity = quantity;
+    }
+
+    public void validateQuantity(int quantity) {
+        if (quantity <= 0) {
+            throw new BadRequestException("Quantity must be a positive number");
+        }
     }
 }

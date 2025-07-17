@@ -79,4 +79,11 @@ public class GlobalExceptionHandler {
         SingleErrorResponse errorResponse = new SingleErrorResponse(e.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<SingleErrorResponse> handleProductNotFoundException(ProductNotFoundException e) {
+        log.warn("해당 상품은 존재하지 않습니다.");
+        SingleErrorResponse errorResponse = new SingleErrorResponse(e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
 }
