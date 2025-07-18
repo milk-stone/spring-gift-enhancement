@@ -6,7 +6,10 @@ import gift.domain.member.dto.MemberInfoPageResponse;
 import gift.domain.member.dto.MemberInfoResponse;
 import gift.domain.member.dto.MemberInfoUpdateRequest;
 import gift.domain.member.service.MemberService;
+import gift.global.dto.CustomPageRequest;
+import gift.global.dto.CustomPageResponse;
 import gift.global.exception.TokenExpiredException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +49,10 @@ public class MemberController {
     }
 
     @GetMapping
-    public ResponseEntity<MemberInfoPageResponse> getMemberInfos(@LoginMember Member member, Pageable pageable) {
+    public ResponseEntity<MemberInfoPageResponse> getMemberInfos(
+            @LoginMember Member member,
+            @Valid @ModelAttribute CustomPageRequest customPageable) {
+        Pageable pageable = customPageable.toPageable();
         return new ResponseEntity<>(new MemberInfoPageResponse(memberService.getMembers(member, pageable)), HttpStatus.OK);
     }
 }

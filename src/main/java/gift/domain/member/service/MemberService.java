@@ -6,6 +6,7 @@ import gift.domain.member.RoleType;
 import gift.domain.member.dto.MemberInfoResponse;
 import gift.domain.member.dto.MemberInfoUpdateRequest;
 import gift.domain.member.repository.MemberRepository;
+import gift.global.dto.CustomPageResponse;
 import gift.global.exception.MemberNotFoundException;
 import gift.global.exception.NotAdminException;
 import gift.global.exception.TokenExpiredException;
@@ -55,7 +56,7 @@ public class MemberService {
         memberRepository.delete(targetMember);
     }
 
-    public Page<MemberInfoResponse> getMembers(Member member, Pageable pageable) {
+    public CustomPageResponse<MemberInfoResponse> getMembers(Member member, Pageable pageable) {
         if (!member.getRole().equalsIgnoreCase(RoleType.ADMIN.toString())) {
             throw new NotAdminException("MemberService : getMembers() failed - member is not admin");
         }
@@ -63,7 +64,7 @@ public class MemberService {
         if (members.isEmpty()) {
             return null;
         }
-        return members.map(MemberInfoResponse::from);
+        return CustomPageResponse.from(members.map(MemberInfoResponse::from));
     }
 
     public Optional<Member> findByEmail(String email) {

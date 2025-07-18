@@ -1,6 +1,6 @@
 package gift.domain.member.dto;
 
-import org.springframework.data.domain.Page;
+import gift.global.dto.CustomPageResponse;
 
-public record MemberInfoPageResponse(Page<MemberInfoResponse> memberInfoResponses) {
+public record MemberInfoPageResponse(CustomPageResponse<MemberInfoResponse> memberInfoResponses) {
 }
