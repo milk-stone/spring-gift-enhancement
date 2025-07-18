@@ -1,6 +1,6 @@
 package gift.domain.product.dto;
 
-import org.springframework.data.domain.Page;
+import gift.global.dto.CustomPageResponse;
 
-public record ProductPageResponse(Page<ProductResponse> productResponseList) {
+public record ProductPageResponse(CustomPageResponse<ProductResponse> productResponseList) {
 }

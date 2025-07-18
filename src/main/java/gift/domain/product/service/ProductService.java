@@ -5,6 +5,7 @@ import gift.domain.product.dto.ProductRequest;
 import gift.domain.product.dto.ProductResponse;
 import gift.domain.product.dto.ProductUpdateRequest;
 import gift.domain.product.repository.ProductRepository;
+import gift.global.dto.CustomPageResponse;
 import gift.global.exception.ProductNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,8 +47,8 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    public Page<ProductResponse> getAllProducts(Pageable pageable) {
+    public CustomPageResponse<ProductResponse> getAllProducts(Pageable pageable) {
         Page<Product> products = productRepository.findAll(pageable);
-        return products.map(ProductResponse::from);
+        return CustomPageResponse.from(products.map(ProductResponse::from));
     }
 }

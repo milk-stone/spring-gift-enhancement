@@ -5,6 +5,7 @@ import gift.domain.product.dto.ProductRequest;
 import gift.domain.product.dto.ProductResponse;
 import gift.domain.product.dto.ProductUpdateRequest;
 import gift.domain.product.service.ProductService;
+import gift.global.dto.CustomPageRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -46,7 +47,9 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<ProductPageResponse> productList(
-            @PageableDefault(size = 10, sort = "id") Pageable pageable) {
+            @Valid @ModelAttribute CustomPageRequest customPageable
+            ) {
+        Pageable pageable = customPageable.toPageable();
         return new ResponseEntity<>(new ProductPageResponse(productService.getAllProducts(pageable)), HttpStatus.OK);
     }
 
