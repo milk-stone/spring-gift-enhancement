@@ -2,14 +2,11 @@ package gift.domain.wish.controller;
 
 import gift.domain.annotation.LoginMember;
 import gift.domain.member.Member;
-import gift.domain.wish.dto.WishListPageResponse;
-import gift.domain.wish.dto.WishRequest;
-import gift.domain.wish.dto.WishResponse;
-import gift.domain.wish.dto.WishUpdateRequest;
+import gift.domain.wish.dto.*;
 import gift.domain.wish.service.WishService;
+import gift.global.dto.CustomPageRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,10 +49,11 @@ public class WishController {
     }
 
     @GetMapping
-    public ResponseEntity<WishListPageResponse> getWishes(
+    public ResponseEntity<WishPageResponse> getWishes(
             @LoginMember Member member,
-            @PageableDefault(size = 10, sort = "id") Pageable pageable
-    ) {
-        return new ResponseEntity<>(new WishListPageResponse(wishService.getWishes(member, pageable)), HttpStatus.OK);
+            @Valid @ModelAttribute CustomPageRequest customPageable
+            ) {
+        Pageable pageable = customPageable.toPageable();
+        return new ResponseEntity<>(new WishPageResponse(wishService.getWishes(member, pageable)), HttpStatus.OK);
     }
 }

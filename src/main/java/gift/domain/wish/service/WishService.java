@@ -9,6 +9,7 @@ import gift.domain.wish.dto.WishRequest;
 import gift.domain.wish.dto.WishResponse;
 import gift.domain.wish.dto.WishUpdateRequest;
 import gift.domain.wish.repository.WishRepository;
+import gift.global.dto.CustomPageResponse;
 import gift.global.exception.BadRequestException;
 import gift.global.exception.ProductNotFoundException;
 import gift.global.exception.TokenExpiredException;
@@ -58,8 +59,10 @@ public class WishService {
         wishRepository.delete(wish);
     }
 
-    public Page<WishResponse> getWishes(Member member, Pageable pageable) {
-        return wishRepository.findAllByMemberId(member.getId(), pageable)
-                .map(WishResponse::from);
+    public CustomPageResponse<WishResponse> getWishes(Member member, Pageable pageable) {
+        return CustomPageResponse.from(
+                wishRepository.findAllByMemberId(member.getId(), pageable)
+                        .map(WishResponse::from)
+        );
     }
 }
