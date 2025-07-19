@@ -5,11 +5,14 @@ import gift.domain.member.repository.MemberRepository;
 import gift.domain.product.Product;
 import gift.domain.product.repository.ProductRepository;
 import gift.domain.wish.repository.WishRepository;
+import gift.global.dto.CustomPageRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +59,7 @@ public class WishRepositoryTest {
     }
 
     @Test
-    @DisplayName("특정 회원의 모든 위시리스트 항목을 조회하면, 해당 회원의 항목만 반환되어야 한다.")
+    @DisplayName("특정 회원의 모든 위시리스트 항목을 조회하면, 해당 회원의 항목만 반환되어야 한다. 위시리스트를 반환할 때 페이지네이션이 적용 되었는지도 확인한다.")
     void findAllByMember() {
         // given
         // 다른 회원 생성
@@ -67,9 +70,12 @@ public class WishRepositoryTest {
         wishRepository.save(new Wish(testMember, testProduct2, 2));
         wishRepository.save(new Wish(otherMember, testProduct1, 3));
 
+        CustomPageRequest pageRequest = new CustomPageRequest(0, 5, "quantity,desc");
+        Pageable pageable = pageRequest.toPageable();
+
         // when
-        List<Wish> testMemberWishes = wishRepository.findAllByMember(testMember.getId());
-        List<Wish> otherMemberWishes = wishRepository.findAllByMember(otherMember.getId());
+        Page<Wish> testMemberWishes = wishRepository.findAllByMemberId(testMember.getId(), pageable);
+        Page<Wish> otherMemberWishes = wishRepository.findAllByMemberId(otherMember.getId(), pageable);
 
         // then
         assertThat(testMemberWishes).hasSize(2);
@@ -77,7 +83,7 @@ public class WishRepositoryTest {
                 .containsExactlyInAnyOrder("상품1", "상품2");
 
         assertThat(otherMemberWishes).hasSize(1);
-        assertThat(otherMemberWishes.get(0).getProduct().getName()).isEqualTo("상품1");
+        assertThat(otherMemberWishes.get().toList().getFirst().getProduct().getName()).isEqualTo("상품1");
     }
 
     @Test
@@ -89,7 +95,7 @@ public class WishRepositoryTest {
 
         // when
         Wish foundWish = wishRepository.findById(wishId).get();
-        foundWish.update(10); // 수량을 10으로 변경
+        foundWish.updateQuantity(10); // 수량을 10으로 변경
         wishRepository.save(foundWish);
 
         // then

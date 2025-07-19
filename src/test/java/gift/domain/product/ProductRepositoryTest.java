@@ -1,10 +1,13 @@
 package gift.domain.product;
 
 import gift.domain.product.repository.ProductRepository;
+import gift.global.dto.CustomPageRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,19 +37,23 @@ public class ProductRepositoryTest {
     }
 
     @Test
-    @DisplayName("모든 상품을 조회하면, 저장된 모든 상품 리스트가 반환되어야 한다.")
+    @DisplayName("모든 상품을 조회하면, 저장된 모든 상품 리스트가 반환되어야 한다. 모든 상품을 반환할 때 페이지네이션이 적용 되었는지도 확인한다.")
     void findAllProducts() {
         // given
         Product product1 = new Product("상품1", 1000L, "1.jpg");
         Product product2 = new Product("상품2", 2000L, "2.jpg");
         productRepository.saveAll(List.of(product1, product2));
 
+        CustomPageRequest customPageRequest = new CustomPageRequest(0, 5, null);
+        Pageable pageable = customPageRequest.toPageable();
+
         // when
-        List<Product> products = productRepository.findAll();
+        Page<Product> products = productRepository.findAll(pageable);
+        List<Product> productList = products.getContent();
 
         // then
-        assertThat(products).hasSize(2); // 리스트의 크기가 2인지 확인
-        assertThat(products).extracting(Product::getName) // 이름만 추출하여
+        assertThat(productList).hasSize(2); // 리스트의 크기가 2인지 확인
+        assertThat(productList).extracting(Product::getName) // 이름만 추출하여
                 .containsExactlyInAnyOrder("상품1", "상품2"); // 순서에 상관없이 포함하는지 확인
     }
 

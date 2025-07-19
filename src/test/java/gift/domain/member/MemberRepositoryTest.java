@@ -1,10 +1,13 @@
 package gift.domain.member;
 
 import gift.domain.member.repository.MemberRepository;
+import gift.global.dto.CustomPageRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -67,19 +70,22 @@ public class MemberRepositoryTest {
     }
 
     @Test
-    @DisplayName("모든 회원을 조회하면, 저장된 모든 회원 리스트가 반환되어야 한다.")
+    @DisplayName("모든 회원을 조회하면, 저장된 모든 회원 리스트가 반환되어야 한다. 모든 회원을 반환할 때 페이지네이션이 적용 되었는지도 확인한다.")
     void findAllMembers() {
         // given
         Member member1 = new Member("user1@test.com", "pass1", "유저1");
         Member member2 = new Member("user2@test.com", "pass2", "유저2");
         memberRepository.saveAll(List.of(member1, member2));
+        CustomPageRequest pageRequest = new CustomPageRequest(0, 5, null);
+        Pageable pageable = pageRequest.toPageable();
 
         // when
-        List<Member> members = memberRepository.findAll();
+        Page<Member> members = memberRepository.findAll(pageable);
+        List<Member> memberList = members.getContent();
 
         // then
-        assertThat(members).hasSize(2);
-        assertThat(members).extracting(Member::getEmail)
+        assertThat(memberList).hasSize(2);
+        assertThat(memberList).extracting(Member::getEmail)
                 .containsExactlyInAnyOrder("user1@test.com", "user2@test.com");
     }
 
