@@ -9,10 +9,13 @@ import gift.domain.wish.dto.WishRequest;
 import gift.domain.wish.dto.WishResponse;
 import gift.domain.wish.dto.WishUpdateRequest;
 import gift.domain.wish.repository.WishRepository;
+import gift.global.dto.CustomPageResponse;
 import gift.global.exception.BadRequestException;
 import gift.global.exception.ProductNotFoundException;
 import gift.global.exception.TokenExpiredException;
 import gift.global.exception.WishNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -56,9 +59,10 @@ public class WishService {
         wishRepository.delete(wish);
     }
 
-    public List<WishResponse> getWishes(Member member) {
-        return wishRepository.findAllByMemberId(member.getId()).stream()
-                .map(WishResponse::from)
-                .toList();
+    public CustomPageResponse<WishResponse> getWishes(Member member, Pageable pageable) {
+        return CustomPageResponse.from(
+                wishRepository.findAllByMemberId(member.getId(), pageable)
+                        .map(WishResponse::from)
+        );
     }
 }

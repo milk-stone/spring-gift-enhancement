@@ -6,9 +6,12 @@ import gift.domain.member.RoleType;
 import gift.domain.member.dto.MemberInfoResponse;
 import gift.domain.member.dto.MemberInfoUpdateRequest;
 import gift.domain.member.repository.MemberRepository;
+import gift.global.dto.CustomPageResponse;
 import gift.global.exception.MemberNotFoundException;
 import gift.global.exception.NotAdminException;
 import gift.global.exception.TokenExpiredException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,18 +56,15 @@ public class MemberService {
         memberRepository.delete(targetMember);
     }
 
-    public List<MemberInfoResponse> getMembers(Member member) {
+    public CustomPageResponse<MemberInfoResponse> getMembers(Member member, Pageable pageable) {
         if (!member.getRole().equalsIgnoreCase(RoleType.ADMIN.toString())) {
             throw new NotAdminException("MemberService : getMembers() failed - member is not admin");
         }
-        List<Member> members = memberRepository.findAll();
+        Page<Member> members = memberRepository.findAll(pageable);
         if (members.isEmpty()) {
             return null;
         }
-        return members
-                .stream()
-                .map(MemberInfoResponse::from)
-                .toList();
+        return CustomPageResponse.from(members.map(MemberInfoResponse::from));
     }
 
     public Optional<Member> findByEmail(String email) {

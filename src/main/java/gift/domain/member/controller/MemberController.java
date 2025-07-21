@@ -2,16 +2,18 @@ package gift.domain.member.controller;
 
 import gift.domain.annotation.LoginMember;
 import gift.domain.member.Member;
-import gift.domain.member.dto.MemberInfoListResponse;
+import gift.domain.member.dto.MemberInfoPageResponse;
 import gift.domain.member.dto.MemberInfoResponse;
 import gift.domain.member.dto.MemberInfoUpdateRequest;
 import gift.domain.member.service.MemberService;
+import gift.global.dto.CustomPageRequest;
+import gift.global.dto.CustomPageResponse;
 import gift.global.exception.TokenExpiredException;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/members")
@@ -47,7 +49,10 @@ public class MemberController {
     }
 
     @GetMapping
-    public ResponseEntity<MemberInfoListResponse> getMemberInfos(@LoginMember Member member) {
-        return new ResponseEntity<>(new MemberInfoListResponse(memberService.getMembers(member)), HttpStatus.OK);
+    public ResponseEntity<MemberInfoPageResponse> getMemberInfos(
+            @LoginMember Member member,
+            @Valid @ModelAttribute CustomPageRequest customPageable) {
+        Pageable pageable = customPageable.toPageable();
+        return new ResponseEntity<>(new MemberInfoPageResponse(memberService.getMembers(member, pageable)), HttpStatus.OK);
     }
 }

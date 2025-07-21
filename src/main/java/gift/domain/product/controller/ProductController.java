@@ -1,11 +1,14 @@
 package gift.domain.product.controller;
 
-import gift.domain.product.dto.ProductListResponse;
+import gift.domain.product.dto.ProductPageResponse;
 import gift.domain.product.dto.ProductRequest;
 import gift.domain.product.dto.ProductResponse;
 import gift.domain.product.dto.ProductUpdateRequest;
 import gift.domain.product.service.ProductService;
+import gift.global.dto.CustomPageRequest;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,8 +46,11 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<ProductListResponse> productList() {
-        return new ResponseEntity<>(new ProductListResponse(productService.getAllProducts()), HttpStatus.OK);
+    public ResponseEntity<ProductPageResponse> productList(
+            @Valid @ModelAttribute CustomPageRequest customPageable
+            ) {
+        Pageable pageable = customPageable.toPageable();
+        return new ResponseEntity<>(new ProductPageResponse(productService.getAllProducts(pageable)), HttpStatus.OK);
     }
 
 }
