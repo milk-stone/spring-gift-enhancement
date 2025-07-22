@@ -6,6 +6,8 @@ import gift.domain.product.service.OptionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequestMapping("/api/products/{productId}/options")
@@ -17,11 +19,12 @@ public class OptionController {
     }
 
     @GetMapping
-    public ResponseEntity<OptionListResponse> getOptionList(@PathVariable(name = "productId") Long productId) {
-        return new ResponseEntity<>(
-                new OptionListResponse(optionService.getProductOptions(productId))
-                , HttpStatus.OK
-        );
+    public ResponseEntity<OptionListResponse> getOptionList(
+            @PathVariable(name = "productId") Long productId
+    ) {
+        var options = optionService.getProductOptions(productId);
+        var responseBody = new OptionListResponse(options);
+        return new ResponseEntity<>(responseBody, OK);
     }
 
     @PostMapping
@@ -30,6 +33,6 @@ public class OptionController {
             @RequestBody OptionRequest optionRequest
     ) {
         optionService.createOption(productId, optionRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(CREATED);
     }
 }
