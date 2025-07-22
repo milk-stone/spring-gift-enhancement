@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -42,7 +43,7 @@ class OptionServiceTest {
         // given
         Long productId = 1L;
         Product product = new Product("Test Product", 10000L, "test.jpg");
-        List<Option> options = List.of(new Option("Option 1", 10, product));
+        List<Option> options = List.of(new Option("Option1", 10, product));
 
         given(productRepository.findById(productId)).willReturn(Optional.of(product));
         given(optionRepository.findAllByProductId(productId)).willReturn(options);
@@ -52,7 +53,7 @@ class OptionServiceTest {
 
         // then
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).name()).isEqualTo("Option 1");
+        assertThat(result.get(0).name()).isEqualTo("Option1");
         verify(productRepository).findById(productId);
         verify(optionRepository).findAllByProductId(productId);
     }
@@ -71,11 +72,11 @@ class OptionServiceTest {
     }
 
     @Test
-    @DisplayName("옵션 생성 성공")
+    @DisplayName("정상적인 이름으로 옵션 생성 성공")
     void createOption_Success() {
         // given
         Long productId = 1L;
-        OptionRequest request = new OptionRequest("New Option", 20);
+        OptionRequest request = new OptionRequest("NewOption", 20);
         Product product = new Product("Test Product", 10000L, "test.jpg");
 
         given(productRepository.findById(productId)).willReturn(Optional.of(product));
@@ -93,7 +94,7 @@ class OptionServiceTest {
     void createOption_DuplicateName() {
         // given
         Long productId = 1L;
-        OptionRequest request = new OptionRequest("Existing Option", 20);
+        OptionRequest request = new OptionRequest("ExistingOption", 20);
         Product product = new Product("Test Product", 10000L, "test.jpg");
 
         given(productRepository.findById(productId)).willReturn(Optional.of(product));
@@ -103,5 +104,25 @@ class OptionServiceTest {
         assertThrows(IllegalArgumentException.class, () -> {
             optionService.createOption(productId, request);
         });
+    }
+
+    @Test
+    @DisplayName("옵션 이름에 공백이 포함된 경우 예외 발생")
+    void createOption_NameIsBlank() {
+        // given
+        Long productId = 1L;
+        // 이름이 공백으로만 이루어진 요청
+        OptionRequest request = new OptionRequest("공백 포함된 옵션", 30);
+        Product product = new Product("Test Product", 10000L, "test.jpg");
+
+        given(productRepository.findById(productId)).willReturn(Optional.of(product));
+        // 중복 검사는 통과했다고 가정
+        given(optionRepository.existsByProductAndName(product, request.name())).willReturn(false);
+
+        // when & then
+        // Option 생성자 내부의 validateName에서 예외가 발생해야 함
+        assertThrows(IllegalArgumentException.class, () -> {
+            optionService.createOption(productId, request);
+        }, "옵션 이름에 공백을 사용할 수 없습니다.");
     }
 }
