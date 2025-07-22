@@ -17,8 +17,7 @@ public class Option {
     @ManyToOne
     private Product product;
 
-    private static final Pattern ALLOWED_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9가-힣\\s\\(\\)\\[\\]\\+\\-\\&\\/_]*$");
-
+    private static final Pattern ALLOWED_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9가-힣()\\[\\]+\\-&/_]*$");
 
     protected Option() {
     }
