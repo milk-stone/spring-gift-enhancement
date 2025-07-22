@@ -14,30 +14,26 @@ import java.util.List;
 @Service
 public class OptionService {
     private final OptionRepository optionRepository;
-    private final ProductRepository productRepository;
 
-    public OptionService(OptionRepository optionRepository, ProductRepository productRepository) {
+    public OptionService(OptionRepository optionRepository) {
         this.optionRepository = optionRepository;
-        this.productRepository = productRepository;
     }
 
-    public List<OptionResponse> getProductOptions(Long productId) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException("ProductService : getProductOptions() failed", productId));
-        return optionRepository.findAllByProductId(productId)
+    public List<OptionResponse> getProductOptions(Product product) {
+        return product.getOptions()
                 .stream()
                 .map(OptionResponse::from)
                 .toList();
     }
 
-    public void createOption(Long productId, OptionRequest optionRequest) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException("ProductService : createOptions() failed", productId));
-        if (optionRepository.existsByProductAndName(product, optionRequest.name())){
-            throw new IllegalArgumentException("이미 존재하는 옵션 이름입니다.");
+    public void createOption(Product product, List<OptionRequest> optionRequests) {
+        for (OptionRequest optionRequest : optionRequests) {
+            if (optionRepository.existsByProductAndName(product, optionRequest.name())){
+                throw new IllegalArgumentException("이미 존재하는 옵션 이름입니다.");
+            }
+            Option option = new Option(optionRequest.name(), optionRequest.quantity(), product);
+            optionRepository.save(option);
+            product.getOptions().add(option);
         }
-        Option option = new Option(optionRequest.name(), optionRequest.quantity(), product);
-        optionRepository.save(option);
-        product.getOptions().add(option);
     }
 }

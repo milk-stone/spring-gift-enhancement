@@ -1,9 +1,8 @@
 package gift.domain.product.controller;
 
-import gift.domain.product.dto.ProductPageResponse;
-import gift.domain.product.dto.ProductRequest;
-import gift.domain.product.dto.ProductResponse;
-import gift.domain.product.dto.ProductUpdateRequest;
+import gift.domain.annotation.LoginMember;
+import gift.domain.member.Member;
+import gift.domain.product.dto.*;
 import gift.domain.product.service.ProductService;
 import gift.global.dto.CustomPageRequest;
 import jakarta.validation.Valid;
@@ -12,6 +11,10 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/products")
@@ -53,4 +56,25 @@ public class ProductController {
         return new ResponseEntity<>(new ProductPageResponse(productService.getAllProducts(pageable)), HttpStatus.OK);
     }
 
+    @GetMapping("/{productId}/options")
+    public ResponseEntity<OptionListResponse> getOptionList(
+            @PathVariable(name = "productId") Long productId
+    ) {
+        var options = productService.getProductOptions(productId);
+        var responseBody = new OptionListResponse(options);
+        return new ResponseEntity<>(responseBody, OK);
+    }
+
+    @PostMapping("/{productId}/options")
+    public ResponseEntity<Void> addOptions(
+            @PathVariable(name = "productId") Long productId,
+            @RequestBody OptionListRequest optionListRequest,
+            @LoginMember Member member
+    ) {
+        if (!member.isAdmin()) {
+            return new ResponseEntity<>(FORBIDDEN);
+        }
+        productService.createProductOptions(productId, optionListRequest.options());
+        return new ResponseEntity<>(CREATED);
+    }
 }
