@@ -1,9 +1,7 @@
 package gift.domain.product.service;
 
 import gift.domain.product.Product;
-import gift.domain.product.dto.ProductRequest;
-import gift.domain.product.dto.ProductResponse;
-import gift.domain.product.dto.ProductUpdateRequest;
+import gift.domain.product.dto.*;
 import gift.domain.product.repository.ProductRepository;
 import gift.global.dto.CustomPageResponse;
 import gift.global.exception.ProductNotFoundException;
@@ -18,15 +16,19 @@ import java.util.Optional;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    private final OptionService optionService;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, OptionService optionService) {
         this.productRepository = productRepository;
+        this.optionService = optionService;
     }
 
     @Transactional
     public ProductResponse addProduct(ProductRequest req) {
         Product product = new Product(req.name(), req.price(), req.imageUrl());
-        return ProductResponse.from(productRepository.save(product));
+        productRepository.save(product);
+        optionService.createOption(product, req.options());
+        return ProductResponse.from(product);
     }
 
     public ProductResponse getProduct(Long id) {
@@ -50,5 +52,17 @@ public class ProductService {
     public CustomPageResponse<ProductResponse> getAllProducts(Pageable pageable) {
         Page<Product> products = productRepository.findAll(pageable);
         return CustomPageResponse.from(products.map(ProductResponse::from));
+    }
+
+    public List<OptionResponse> getProductOptions(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException("ProductService : getProductOptions() failed", productId));
+        return optionService.getProductOptions(product);
+    }
+
+    public void createProductOptions(Long productId, List<OptionRequest> options) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException("ProductService : createProductOptions() failed", productId));
+        optionService.createOption(product, options);
     }
 }
