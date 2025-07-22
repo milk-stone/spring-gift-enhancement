@@ -44,7 +44,7 @@ public class Option {
     }
 
     public void validateQuantity(Integer quantity) {
-        if (quantity == null || quantity < 0) {
+        if (quantity == null || quantity <= 0) {
             throw new IllegalArgumentException("옵션 수량은 1개 이상 이어야 합니다.");
         }
         if (quantity > 100_000_000){
