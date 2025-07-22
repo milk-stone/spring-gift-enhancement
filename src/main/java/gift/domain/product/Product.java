@@ -18,6 +18,9 @@ public class Product {
     private String imageUrl;
 
     @OneToMany(mappedBy = "product")
+    private final List<Option> options = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product")
     private final List<Wish> wishList = new ArrayList<>();
 
     private static final int MAX_NAME_LENGTH = 15;
@@ -51,6 +54,10 @@ public class Product {
 
     public List<Wish> getWishList() {
         return wishList;
+    }
+
+    public List<Option> getOptions() {
+        return options;
     }
 
     public void update(String name, Long price, String imageUrl) {
