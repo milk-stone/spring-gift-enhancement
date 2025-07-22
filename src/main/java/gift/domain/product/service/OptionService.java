@@ -5,8 +5,6 @@ import gift.domain.product.Product;
 import gift.domain.product.dto.OptionRequest;
 import gift.domain.product.dto.OptionResponse;
 import gift.domain.product.repository.OptionRepository;
-import gift.domain.product.repository.ProductRepository;
-import gift.global.exception.ProductNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

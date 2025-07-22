@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,10 +61,8 @@ public class WishRepositoryTest {
     @DisplayName("특정 회원의 모든 위시리스트 항목을 조회하면, 해당 회원의 항목만 반환되어야 한다. 위시리스트를 반환할 때 페이지네이션이 적용 되었는지도 확인한다.")
     void findAllByMember() {
         // given
-        // 다른 회원 생성
         Member otherMember = memberRepository.save(new Member("other@test.com", "password", "other"));
 
-        // 위시리스트 항목들 저장
         wishRepository.save(new Wish(testMember, testProduct1, 1));
         wishRepository.save(new Wish(testMember, testProduct2, 2));
         wishRepository.save(new Wish(otherMember, testProduct1, 3));
@@ -95,7 +92,7 @@ public class WishRepositoryTest {
 
         // when
         Wish foundWish = wishRepository.findById(wishId).get();
-        foundWish.updateQuantity(10); // 수량을 10으로 변경
+        foundWish.updateQuantity(10);
         wishRepository.save(foundWish);
 
         // then

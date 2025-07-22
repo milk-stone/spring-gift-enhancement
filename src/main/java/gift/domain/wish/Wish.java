@@ -5,8 +5,6 @@ import gift.domain.product.Product;
 import gift.global.exception.BadRequestException;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class Wish {

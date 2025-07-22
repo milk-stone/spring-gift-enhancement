@@ -9,7 +9,6 @@ import gift.global.exception.LoginFailedException;
 import gift.global.exception.MemberNotFoundException;
 import gift.domain.auth.dto.TokenResponse;
 import gift.domain.member.repository.MemberRepository;
-import gift.global.exception.TokenExpiredException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
