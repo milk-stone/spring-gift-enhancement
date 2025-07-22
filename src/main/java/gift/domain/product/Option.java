@@ -25,6 +25,7 @@ public class Option {
 
     public Option(String name, Integer quantity, Product product) {
         validateName(name);
+        validateQuantity(quantity);
         this.name = name;
         this.quantity = quantity;
         this.product = product;
@@ -32,13 +33,22 @@ public class Option {
 
     public void validateName(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Name cannot be empty");
+            throw new IllegalArgumentException("이름은 비워둘 수 없습니다.");
         }
         if (name.length() > 50) {
-            throw new IllegalArgumentException("Name cannot be longer than 50 characters");
+            throw new IllegalArgumentException("이름은 50 글자 이내여야 합니다.");
         }
         if (!ALLOWED_NAME_PATTERN.matcher(name).matches()) {
             throw new IllegalArgumentException("옵션 이름에 허용되지 않는 특수문자가 포함되어 있습니다.");
+        }
+    }
+
+    public void validateQuantity(Integer quantity) {
+        if (quantity == null || quantity < 0) {
+            throw new IllegalArgumentException("옵션 수량은 1개 이상 이어야 합니다.");
+        }
+        if (quantity > 100_000_000){
+            throw new IllegalArgumentException("옵션 수량은 1억개 미만 이어야 합니다.");
         }
     }
 
