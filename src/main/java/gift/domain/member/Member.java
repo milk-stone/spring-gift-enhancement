@@ -30,6 +30,14 @@ public class Member {
         this.role = RoleType.USER;
     }
 
+    // Test 용 생성자
+    public Member(String email, String password, String name, RoleType role) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.role = role;
+    }
+
     public Long getId() {
         return id;
     }
@@ -71,5 +79,9 @@ public class Member {
 
     public boolean isAdmin() {
         return this.role.equals(RoleType.ADMIN);
+    }
+
+    public static Member createAdminForTest(String email) {
+        return new Member(email, "testPassword", "관리자", RoleType.ADMIN);
     }
 }
