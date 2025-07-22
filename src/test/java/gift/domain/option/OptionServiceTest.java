@@ -1,28 +1,26 @@
 package gift.domain.option;
 
+import gift.domain.product.repository.ProductRepository;
 import gift.domain.product.service.OptionService;
 import gift.domain.product.Option;
 import gift.domain.product.Product;
 import gift.domain.product.dto.OptionRequest;
 import gift.domain.product.dto.OptionResponse;
 import gift.domain.product.repository.OptionRepository;
-import gift.domain.product.repository.ProductRepository;
-import gift.global.exception.ProductNotFoundException;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,92 +35,92 @@ class OptionServiceTest {
     @Mock
     private ProductRepository productRepository;
 
+    private Product product;
+
+
+    @BeforeEach
+    void setUp() {
+        product = new Product("Test Product", 10000L, "test.jpg");
+        productRepository.save(product);
+        Option option1 = new Option("Option1", 10, product);
+        Option option2 = new Option("Option2", 5, product);
+        optionRepository.saveAll(List.of(option1, option2));
+        product.getOptions().add(option1);
+        product.getOptions().add(option2);
+
+    }
+
+    @AfterEach
+    void tearDown() {
+        optionRepository.deleteAll();
+        productRepository.deleteAll();
+    }
+
     @Test
     @DisplayName("특정 상품의 옵션 목록 조회 성공")
     void getProductOptions_Success() {
-        // given
-        Long productId = 1L;
-        Product product = new Product("Test Product", 10000L, "test.jpg");
-        List<Option> options = List.of(new Option("Option1", 10, product));
+        Product product = new Product("테스트 상품", 10000L, "test.jpg");
+        Option option1 = new Option("색상", 10, product);
+        Option option2 = new Option("사이즈", 20, product);
 
-        given(productRepository.findById(productId)).willReturn(Optional.of(product));
-        given(optionRepository.findAllByProductId(productId)).willReturn(options);
+        product.getOptions().addAll(List.of(option1, option2));
 
-        // when
-        List<OptionResponse> result = optionService.getProductOptions(productId);
+        List<OptionResponse> result = optionService.getProductOptions(product);
 
-        // then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).name()).isEqualTo("Option1");
-        verify(productRepository).findById(productId);
-        verify(optionRepository).findAllByProductId(productId);
+        assertThat(result).hasSize(2);
+        assertThat(result)
+                .extracting(OptionResponse::name) // DTO 리스트에서 name 필드만 추출
+                .containsExactly("색상", "사이즈");
     }
 
     @Test
-    @DisplayName("옵션 목록 조회 시 상품이 없으면 예외 발생")
-    void getProductOptions_ProductNotFound() {
-        // given
-        Long productId = 99L;
-        given(productRepository.findById(productId)).willReturn(Optional.empty());
-
-        // when & then
-        assertThrows(ProductNotFoundException.class, () -> {
-            optionService.getProductOptions(productId);
-        });
-    }
-
-    @Test
-    @DisplayName("정상적인 이름으로 옵션 생성 성공")
+    @DisplayName("입력 받은 상품에 대한 옵션 생성 성공")
     void createOption_Success() {
-        // given
-        Long productId = 1L;
-        OptionRequest request = new OptionRequest("NewOption", 20);
-        Product product = new Product("Test Product", 10000L, "test.jpg");
+        var newOptionRequest1 = new OptionRequest("색상", 100);
+        var newOptionRequest2 = new OptionRequest("사이즈", 200);
+        var optionRequests = List.of(newOptionRequest1, newOptionRequest2);
 
-        given(productRepository.findById(productId)).willReturn(Optional.of(product));
-        given(optionRepository.existsByProductAndName(product, request.name())).willReturn(false);
+        given(optionRepository.existsByProductAndName(any(Product.class), anyString())).willReturn(false);
 
-        // when
-        optionService.createOption(productId, request);
+        optionService.createOption(product, optionRequests);
 
-        // then
-        verify(optionRepository).save(any(Option.class));
+        verify(optionRepository, times(2)).save(any(Option.class));
+
+        assertThat(product.getOptions()).hasSize(4);
     }
 
     @Test
-    @DisplayName("중복된 이름의 옵션 생성 시 예외 발생")
+    @DisplayName("옵션 생성 실패 케이스 - 1. 옵션 이름이 중복될 시 에러 발생")
     void createOption_DuplicateName() {
-        // given
-        Long productId = 1L;
-        OptionRequest request = new OptionRequest("ExistingOption", 20);
-        Product product = new Product("Test Product", 10000L, "test.jpg");
+        var duplicateRequest = new OptionRequest("Option1", 100);
+        var requests = List.of(duplicateRequest);
 
-        given(productRepository.findById(productId)).willReturn(Optional.of(product));
-        given(optionRepository.existsByProductAndName(product, request.name())).willReturn(true);
+        given(optionRepository.existsByProductAndName(product, "Option1")).willReturn(true);
 
-        // when & then
         assertThrows(IllegalArgumentException.class, () -> {
-            optionService.createOption(productId, request);
+            optionService.createOption(product, requests);
         });
     }
 
     @Test
-    @DisplayName("옵션 이름에 공백이 포함된 경우 예외 발생")
-    void createOption_NameIsBlank() {
-        // given
-        Long productId = 1L;
-        // 이름이 공백으로만 이루어진 요청
-        OptionRequest request = new OptionRequest("공백 포함된 옵션", 30);
-        Product product = new Product("Test Product", 10000L, "test.jpg");
+    @DisplayName("옵션 생성 실패 케이스 - 2. 옵션 이름에 공백이 있을 시 에러 발생")
+    void createOption_IncludeBlank() {
+        var blankNameRequest = new OptionRequest("공백 옵션", 100);
+        var requests = List.of(blankNameRequest);
 
-        given(productRepository.findById(productId)).willReturn(Optional.of(product));
-        // 중복 검사는 통과했다고 가정
-        given(optionRepository.existsByProductAndName(product, request.name())).willReturn(false);
-
-        // when & then
-        // Option 생성자 내부의 validateName에서 예외가 발생해야 함
         assertThrows(IllegalArgumentException.class, () -> {
-            optionService.createOption(productId, request);
-        }, "옵션 이름에 공백을 사용할 수 없습니다.");
+            optionService.createOption(product, requests);
+        });
+    }
+
+    @Test
+    @DisplayName("옵션 생성 실패 케이스 - 3. 옵션 이름에 허용되지 않은 특수 문자가 포함되면 에러 발생")
+    void createOption_IncludeNotPermittedCharacter() {
+        var invalidCharRequest = new OptionRequest("잘못된@이름", 100);
+        var requests = List.of(invalidCharRequest);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            optionService.createOption(product, requests);
+        });
     }
 }
