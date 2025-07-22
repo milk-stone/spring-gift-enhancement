@@ -68,4 +68,8 @@ public class Member {
         return this.wishList.stream()
                 .anyMatch(wish -> wish.getProduct().getId().equals(productId));
     }
+
+    public boolean isAdmin() {
+        return this.role.equals(RoleType.ADMIN);
+    }
 }
