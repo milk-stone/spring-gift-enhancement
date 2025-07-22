@@ -6,15 +6,23 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.regex.Pattern;
 
 @Entity
+@Table(name = "option", uniqueConstraints = {
+        @UniqueConstraint(
+                name = "UNIQUE_PRODUCT_OPTION_NAME",
+                columnNames = {"product_id", "name"}
+        )
+})
 public class Option {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "option_id")
     private Long id;
     @NotBlank
+    @Column(length = 50)
     private String name;
     private Integer quantity;
     @ManyToOne
+    @JoinColumn(name = "product_id")
     private Product product;
 
     private static final Pattern ALLOWED_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9가-힣()\\[\\]+\\-&/_]*$");
