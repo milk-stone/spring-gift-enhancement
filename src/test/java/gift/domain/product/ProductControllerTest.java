@@ -139,8 +139,8 @@ class ProductControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content[0].name").value("테스트 상품"));
+                .andExpect(jsonPath("$.productResponseList.content").isArray())
+                .andExpect(jsonPath("$.productResponseList.content[0].name").value("테스트 상품"));
     }
 
     @Test
