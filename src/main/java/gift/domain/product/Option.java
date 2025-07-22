@@ -47,7 +47,7 @@ public class Option {
         if (quantity == null || quantity <= 0) {
             throw new IllegalArgumentException("옵션 수량은 1개 이상 이어야 합니다.");
         }
-        if (quantity > 100_000_000){
+        if (quantity > 100_000_000) {
             throw new IllegalArgumentException("옵션 수량은 1억개 미만 이어야 합니다.");
         }
     }
@@ -69,6 +69,10 @@ public class Option {
     }
 
     public void subtractQuantity(int quantity) {
-        this.quantity -= quantity;
+        if (this.quantity >= quantity) {
+            this.quantity -= quantity;
+            return;
+        }
+        this.quantity = 0;
     }
 }
