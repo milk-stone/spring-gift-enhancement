@@ -2,6 +2,8 @@ package gift.domain.product.dto;
 
 import jakarta.validation.constraints.*;
 
+import java.util.List;
+
 public record ProductRequest(
         @NotBlank(message = "상품 이름은 비워둘 수 없습니다.")
         String name,
@@ -12,5 +14,9 @@ public record ProductRequest(
         Long price,
 
         @NotBlank(message = "이미지 URL은 비워둘 수 없습니다.")
-        String imageUrl) {
+        String imageUrl,
+
+        @NotEmpty(message = "옵션은 최소 1개 이상 등록해야 합니다.")
+        List<OptionRequest> options
+) {
 }

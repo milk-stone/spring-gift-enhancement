@@ -9,13 +9,11 @@ import gift.domain.member.repository.MemberRepository;
 import gift.global.dto.CustomPageResponse;
 import gift.global.exception.MemberNotFoundException;
 import gift.global.exception.NotAdminException;
-import gift.global.exception.TokenExpiredException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service

@@ -1,6 +1,5 @@
 package gift.domain.wish.service;
 
-import gift.domain.auth.service.AuthService;
 import gift.domain.member.Member;
 import gift.domain.product.Product;
 import gift.domain.product.repository.ProductRepository;
@@ -12,9 +11,7 @@ import gift.domain.wish.repository.WishRepository;
 import gift.global.dto.CustomPageResponse;
 import gift.global.exception.BadRequestException;
 import gift.global.exception.ProductNotFoundException;
-import gift.global.exception.TokenExpiredException;
 import gift.global.exception.WishNotFoundException;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 

@@ -7,7 +7,6 @@ import gift.domain.member.dto.MemberInfoResponse;
 import gift.domain.member.dto.MemberInfoUpdateRequest;
 import gift.domain.member.service.MemberService;
 import gift.global.dto.CustomPageRequest;
-import gift.global.dto.CustomPageResponse;
 import gift.global.exception.TokenExpiredException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
